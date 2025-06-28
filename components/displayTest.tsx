@@ -3,7 +3,7 @@
 const key = process.env.key;
 
 export async function getStaticProps() {
-    const res = await fetch(`http://api.weatherapi.com/v1/current.json?key=${key}&q=London`);
+    const res = await fetch(`http://api.weatherapi.com/v1/current.json?key=${key}&q=London&aqi=no`);
     const data = await res.json();
   
     return {
