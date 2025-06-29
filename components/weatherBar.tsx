@@ -1,13 +1,14 @@
 // components/WeatherBar.tsx
 import { cn } from "@/lib/utils"; // shadcn's class utility
 import { ReactNode } from "react";
+import WeatherContainer from "@/components/weatherContainer"; // Assuming this is the correct import path
 
 interface WeatherBarProps {
-  children: ReactNode;
+  data?: any;
   className?: string;
 }
 
-export default function WeatherBar({ children, className }: WeatherBarProps) {
+export default function WeatherBar({ data, className }: WeatherBarProps) {
   return (
     <div
       className={cn(
@@ -15,7 +16,7 @@ export default function WeatherBar({ children, className }: WeatherBarProps) {
         className
       )}
     >
-      {children}
+      {data && <WeatherContainer data={data} />}
     </div>
   );
 }
