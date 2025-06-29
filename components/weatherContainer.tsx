@@ -2,19 +2,48 @@
 import { cn } from "@/lib/utils";
 
 interface WeatherContainerProps {
+  data?: any; // Add data prop
   children?: React.ReactNode;
   className?: string;
+  
 }
 
-export default function WeatherContainer({ children, className }: WeatherContainerProps) {
+interface WeatherInfoProps {
+  data: any;
+  dayIndex?: number;
+}
+
+function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
+  const forecastDay = data.forecast.forecastday[dayIndex];
+  if (!forecastDay) return <div>No data for this day.</div>;
+
+  let newDate = forecastDay.date;
+
+  newDate = newDate.slice(5, 10);
+
+  const {
+    day: {
+      maxtemp_f,
+      mintemp_f,
+      condition: { text, icon }
+    }
+  } = forecastDay;
+
   return (
-    <div
-      className={cn(
-        "w-10 h-10 bg-gray-800 rounded-md flex items-center justify-center text-white mx-1",
-        className
-      )}
-    >
-      {children || "🌤️"}
+    <div>
+      <h2 className="text-xl font-bold">{newDate}</h2>
+      <p>Max Temp: {maxtemp_f}°F</p>
+      <p>Min Temp: {mintemp_f}°F</p>
+      <img src={icon} alt={text} />
+    </div>
+  );
+}
+
+export default function WeatherContainer({ data, children, className, dayIndex }: WeatherContainerProps & { dayIndex?: number }) {
+  return (
+    <div className={cn("border p-4 rounded-md bg-gray-100", className)}>
+      {data && <WeatherInfo data={data} dayIndex={dayIndex} />}
+      {children}
     </div>
   );
 }
