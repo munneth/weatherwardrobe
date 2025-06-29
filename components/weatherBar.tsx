@@ -16,7 +16,14 @@ export default function WeatherBar({ data, className }: WeatherBarProps) {
         className
       )}
     >
-      {data && <WeatherContainer data={data} />}
+      {data && <WeatherContainer data={data} dayIndex={0}/>}
+      {data && <WeatherContainer data={data} dayIndex={1}/>}
+      {data && <WeatherContainer data={data} dayIndex={2}/>}
+      {data && <WeatherContainer data={data} dayIndex={3}/>}  
+      {data && <WeatherContainer data={data} dayIndex={4}/>}
+      {data && <WeatherContainer data={data} dayIndex={5}/>}
+      {data && <WeatherContainer data={data} dayIndex={6}/>}
+      {/* Add more WeatherContainer components as needed */}
     </div>
   );
 }

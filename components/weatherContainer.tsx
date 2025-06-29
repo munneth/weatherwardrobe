@@ -5,10 +5,18 @@ interface WeatherContainerProps {
   data?: any; // Add data prop
   children?: React.ReactNode;
   className?: string;
+  
 }
 
-function WeatherInfo({ data }: { data: any }) {
-  const forecastDay = data.forecast.forecastday[0];
+interface WeatherInfoProps {
+  data: any;
+  dayIndex?: number;
+}
+
+function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
+  const forecastDay = data.forecast.forecastday[dayIndex];
+  if (!forecastDay) return <div>No data for this day.</div>;
+
   const {
     date,
     day: {
@@ -28,10 +36,10 @@ function WeatherInfo({ data }: { data: any }) {
   );
 }
 
-export default function WeatherContainer({ data, children, className }: WeatherContainerProps) {
+export default function WeatherContainer({ data, children, className, dayIndex }: WeatherContainerProps & { dayIndex?: number }) {
   return (
     <div className={cn("border p-4 rounded-md", className)}>
-      {data && <WeatherInfo data={data} />}
+      {data && <WeatherInfo data={data} dayIndex={dayIndex} />}
       {children}
     </div>
   );
