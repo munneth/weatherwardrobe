@@ -41,7 +41,7 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
 
 export default function WeatherContainer({ data, children, className, dayIndex }: WeatherContainerProps & { dayIndex?: number }) {
   return (
-    <div className={cn("border p-4 rounded-md bg-gray-100 gap-0.5", className)}>
+    <div className={cn("border p-4 rounded-md bg-gray-100", className)}>
       {data && <WeatherInfo data={data} dayIndex={dayIndex} />}
       {children}
     </div>
