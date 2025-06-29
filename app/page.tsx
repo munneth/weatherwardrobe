@@ -2,27 +2,18 @@
 import Image from "next/image";
 import WeatherBar from "@/components/weatherBar";
 import WeatherContainer from "@/components/weatherContainer";
+import { ReceiptRussianRubleIcon } from "lucide-react";
 
 const key = process.env.key;
 
-export default function Home() {
+
+
+export default async function Home() {
+  const res = await fetch(`http://api.weatherapi.com/v1/current.json?key=${key}&q=London&days=1`);
+  const data = await res.json();
   return (
     <main className="p-8 space-y-8">
-      <section>
-        <h1 className="text-xl font-bold">Hello World</h1>
-      </section>
-
-      <section>
-        <h2 className="text-sm mb-4">weather app</h2>
-        <WeatherBar>
-          <WeatherContainer />
-          <WeatherContainer />
-          <WeatherContainer />
-          <WeatherContainer />
-          <WeatherContainer />
-          <WeatherContainer />
-        </WeatherBar>
-      </section>
+      <WeatherContainer>{JSON.stringify(data)}</WeatherContainer>
     </main>
   );
 }

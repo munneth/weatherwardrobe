@@ -8,13 +8,8 @@ interface WeatherContainerProps {
 
 export default function WeatherContainer({ children, className }: WeatherContainerProps) {
   return (
-    <div
-      className={cn(
-        "w-10 h-10 bg-gray-800 rounded-md flex items-center justify-center text-white mx-1",
-        className
-      )}
-    >
-      {children || "🌤️"}
+    <div className={cn("border p-4 rounded-md", className)}>
+      {children}
     </div>
   );
 }
