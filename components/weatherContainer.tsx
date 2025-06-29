@@ -17,8 +17,11 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
   const forecastDay = data.forecast.forecastday[dayIndex];
   if (!forecastDay) return <div>No data for this day.</div>;
 
+  let newDate = forecastDay.date;
+
+  newDate = newDate.slice(5, 10);
+
   const {
-    date,
     day: {
       maxtemp_f,
       mintemp_f,
@@ -28,17 +31,17 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
 
   return (
     <div>
-      <h2 className="text-xl font-bold">{date}</h2>
+      <h2 className="text-xl font-bold">{newDate}</h2>
       <p>Max Temp: {maxtemp_f}°F</p>
       <p>Min Temp: {mintemp_f}°F</p>
-      <p>Condition: {text}</p>
+      <img src={icon} alt={text} />
     </div>
   );
 }
 
 export default function WeatherContainer({ data, children, className, dayIndex }: WeatherContainerProps & { dayIndex?: number }) {
   return (
-    <div className={cn("border p-4 rounded-md", className)}>
+    <div className={cn("border p-4 rounded-md bg-gray-100 gap-0.5", className)}>
       {data && <WeatherInfo data={data} dayIndex={dayIndex} />}
       {children}
     </div>
