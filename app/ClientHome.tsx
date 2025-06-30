@@ -1,31 +1,22 @@
 "use client";
 import { useState } from "react";
 import WeatherBar from "@/components/weatherBar";
-import { Calendar } from "@/components/ui/calendar";
+import  CalendarApp  from "@/components/calendarApp";
 
 export default function ClientHome({ data }: { data: any }) {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   return (
+
     <main className="p-8 space-y-8">
       <div>
         <WeatherBar data={data} className="bg-blue-500 text-white p-4 rounded-lg shadow-md" />
       </div>
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="bg-[#70798C] p-12 rounded-xl">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            className="rounded-lg border "
-          />
+        <div className="">
+          <CalendarApp />
         </div>
-        <div>
-
-        </div>
-        <div>
-
-        </div>
+        
       </div>
     </main>
   );
