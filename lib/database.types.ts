@@ -29,10 +29,10 @@ export interface Database {
           category: 'top' | 'bottom' | 'dress' | 'outerwear' | 'shoes' | 'accessory'
           color: string
           material: string
-          season: 'spring' | 'summer' | 'fall' | 'winter' | 'all'
-          weather_condition: 'sunny' | 'rainy' | 'snowy' | 'cloudy' | 'all'
-          min_temp: number
-          max_temp: number
+          season?: 'spring' | 'summer' | 'fall' | 'winter' | 'all'
+          weather_condition?: 'sunny' | 'rainy' | 'snowy' | 'cloudy' | 'all'
+          min_temp?: number
+          max_temp?: number
           image_url?: string
           created_at: string
           updated_at: string
@@ -44,10 +44,10 @@ export interface Database {
           category: 'top' | 'bottom' | 'dress' | 'outerwear' | 'shoes' | 'accessory'
           color: string
           material: string
-          season: 'spring' | 'summer' | 'fall' | 'winter' | 'all'
-          weather_condition: 'sunny' | 'rainy' | 'snowy' | 'cloudy' | 'all'
-          min_temp: number
-          max_temp: number
+          season?: 'spring' | 'summer' | 'fall' | 'winter' | 'all'
+          weather_condition?: 'sunny' | 'rainy' | 'snowy' | 'cloudy' | 'all'
+          min_temp?: number
+          max_temp?: number
           image_url?: string
           created_at?: string
           updated_at?: string

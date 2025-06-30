@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { WardrobeService } from "@/lib/wardrobe-service"
+import { FileUploadService } from "@/lib/file-upload-service"
 
 interface AddItemModalProps {
   isOpen: boolean
@@ -27,24 +28,42 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
     material: "",
     image_url: ""
   })
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setSelectedFile(file)
+      // Create preview URL
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
+      let imageUrl: string | undefined = undefined
+      
+      // Upload image if selected
+      if (selectedFile) {
+        imageUrl = await FileUploadService.uploadImage(selectedFile, userId)
+      }
+
       await WardrobeService.addItem({
         user_id: userId,
         name: formData.name,
         category: formData.category as any,
         color: formData.color,
         material: formData.material,
-        season: "all" as any,
-        weather_condition: "all" as any,
-        min_temp: 0,
-        max_temp: 100,
-        image_url: formData.image_url || undefined
+        image_url: imageUrl
       })
 
       // Reset form and close modal
@@ -55,6 +74,8 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
         material: "",
         image_url: ""
       })
+      setSelectedFile(null)
+      setImagePreview(null)
       onClose()
     } catch (error) {
       console.error("Error adding item:", error)
@@ -132,13 +153,23 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="image_url">Image URL (Optional)</Label>
+            <Label htmlFor="image">Item Image</Label>
             <Input
-              id="image_url"
-              value={formData.image_url}
-              onChange={(e) => handleInputChange("image_url", e.target.value)}
-              placeholder="https://example.com/image.jpg"
+              id="image"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="cursor-pointer"
             />
+            {imagePreview && (
+              <div className="mt-2">
+                <img 
+                  src={imagePreview} 
+                  alt="Preview" 
+                  className="w-32 h-32 object-cover rounded-md border"
+                />
+              </div>
+            )}
           </div>
 
           <SheetFooter className="mt-6">
