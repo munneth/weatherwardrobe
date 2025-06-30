@@ -12,7 +12,7 @@ export default function WeatherBar({ data, className }: WeatherBarProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-between bg-gray-200 rounded-full px-20 py-2 overflow-x-auto"
+        "flex items-center justify-between bg-[#F5F1ED] rounded-full px-20 py-2 overflow-x-auto"
       )}
     >
       {data && <WeatherContainer data={data} dayIndex={0}/>}
