@@ -4,7 +4,7 @@ import WeatherBar from "@/components/weatherBar";
 import  CalendarApp  from "@/components/calendarApp";
 import HisHersCard from "@/components/hisHersCard";
 import NavbarApp from "@/components/navbarApp";
-
+import FloatingActionButton from "@/components/floating-action-button";
 
 export default function ClientHome({ data }: { data: any }) {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -31,6 +31,7 @@ export default function ClientHome({ data }: { data: any }) {
           
         </div>
       </main>
-      </>
+      <FloatingActionButton />
+    </>
   );
 }
