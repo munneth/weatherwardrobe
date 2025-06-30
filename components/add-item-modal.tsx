@@ -25,10 +25,6 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
     category: "",
     color: "",
     material: "",
-    season: "",
-    weather_condition: "",
-    min_temp: "",
-    max_temp: "",
     image_url: ""
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -44,10 +40,10 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
         category: formData.category as any,
         color: formData.color,
         material: formData.material,
-        season: formData.season as any,
-        weather_condition: formData.weather_condition as any,
-        min_temp: parseInt(formData.min_temp),
-        max_temp: parseInt(formData.max_temp),
+        season: "all" as any,
+        weather_condition: "all" as any,
+        min_temp: 0,
+        max_temp: 100,
         image_url: formData.image_url || undefined
       })
 
@@ -57,10 +53,6 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
         category: "",
         color: "",
         material: "",
-        season: "",
-        weather_condition: "",
-        min_temp: "",
-        max_temp: "",
         image_url: ""
       })
       onClose()
@@ -137,67 +129,6 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
               placeholder="e.g., Cotton, Denim, Wool"
               required
             />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="season">Season</Label>
-            <select
-              id="season"
-              value={formData.season}
-              onChange={(e) => handleInputChange("season", e.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              required
-            >
-              <option value="">Select season</option>
-              <option value="spring">Spring</option>
-              <option value="summer">Summer</option>
-              <option value="fall">Fall</option>
-              <option value="winter">Winter</option>
-              <option value="all">All Seasons</option>
-            </select>
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="weather_condition">Weather Condition</Label>
-            <select
-              id="weather_condition"
-              value={formData.weather_condition}
-              onChange={(e) => handleInputChange("weather_condition", e.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              required
-            >
-              <option value="">Select weather</option>
-              <option value="sunny">Sunny</option>
-              <option value="rainy">Rainy</option>
-              <option value="snowy">Snowy</option>
-              <option value="cloudy">Cloudy</option>
-              <option value="all">All Weather</option>
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="min_temp">Min Temp (°F)</Label>
-              <Input
-                id="min_temp"
-                type="number"
-                value={formData.min_temp}
-                onChange={(e) => handleInputChange("min_temp", e.target.value)}
-                placeholder="30"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="max_temp">Max Temp (°F)</Label>
-              <Input
-                id="max_temp"
-                type="number"
-                value={formData.max_temp}
-                onChange={(e) => handleInputChange("max_temp", e.target.value)}
-                placeholder="80"
-                required
-              />
-            </div>
           </div>
 
           <div className="grid gap-2">
