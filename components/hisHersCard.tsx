@@ -1,4 +1,12 @@
 import Image from "next/image";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+  } from "@/components/ui/carousel"
+
 
 interface HisHersCardProps {
     his?: boolean;
@@ -10,15 +18,22 @@ export default function HisHersCard({ his }: HisHersCardProps){
             <div className="text-center">
                 {his ? <h2>His</h2> : <h2>Hers</h2>}
             </div>
-            <div className="bg-[#70798C] p-12">
-                <div className="bg-amber-50 p-20">
-                    <Image 
-                        src="/path/to/his-image.jpg" 
-                        alt="His" 
-                        width={200}   // <-- Add width
-                        height={200}  // <-- Add height
-                    />
-                </div>
+            <div>
+                <Carousel>
+                    <CarouselContent>
+                        <CarouselItem>
+                            <Image src="/path/to/his-image1.jpg" alt="His" width={200} height={200} />
+                        </CarouselItem>
+                        <CarouselItem>
+                            <Image src="/path/to/his-image2.jpg" alt="His" width={200} height={200} />
+                        </CarouselItem>
+                        <CarouselItem>
+                            <Image src="/path/to/his-image3.jpg" alt="His" width={200} height={200} />
+                        </CarouselItem>
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
             </div>
         </div>
     )
