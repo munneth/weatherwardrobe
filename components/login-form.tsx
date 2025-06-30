@@ -71,12 +71,14 @@ export function LoginForm({
       console.log("Google login successful!", result.user.email)
       window.location.href = '/'
     } catch (error: any) {
-      console.error("Google auth error:", error)
       if (error.code === 'auth/popup-closed-by-user') {
-        setError('Login cancelled.')
+        // User closed the popup - this is normal, don't show error
+        console.log("Google login popup was closed by user")
+        setError("")
       } else if (error.code === 'auth/popup-blocked') {
         setError('Popup blocked. Please allow popups for this site.')
       } else {
+        console.error("Google auth error:", error)
         setError('Google login failed. Please try again.')
       }
       setIsLoading(false)
