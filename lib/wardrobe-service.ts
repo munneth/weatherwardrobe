@@ -7,6 +7,8 @@ type Outfit = Database['public']['Tables']['outfits']['Insert']
 export class WardrobeService {
   // Add a new wardrobe item
   static async addItem(item: Omit<WardrobeItem, 'id' | 'created_at' | 'updated_at'>) {
+    console.log("WardrobeService.addItem called with:", item)
+    
     const { data, error } = await supabase
       .from('wardrobe_items')
       .insert(item)
@@ -14,10 +16,14 @@ export class WardrobeService {
       .single()
 
     if (error) {
-      console.error('Error adding wardrobe item:', error)
+      console.error("Supabase error details:", error)
+      console.error("Error code:", error.code)
+      console.error("Error message:", error.message)
+      console.error("Error details:", error.details)
       throw error
     }
 
+    console.log("Item added successfully:", data)
     return data
   }
 

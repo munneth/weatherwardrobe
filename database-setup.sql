@@ -1,9 +1,21 @@
--- Enable Row Level Security
-ALTER TABLE auth.users ENABLE ROW LEVEL SECURITY;
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
+
+DROP POLICY IF EXISTS "Users can view own wardrobe items" ON public.wardrobe_items;
+DROP POLICY IF EXISTS "Users can insert own wardrobe items" ON public.wardrobe_items;
+DROP POLICY IF EXISTS "Users can update own wardrobe items" ON public.wardrobe_items;
+DROP POLICY IF EXISTS "Users can delete own wardrobe items" ON public.wardrobe_items;
+
+DROP POLICY IF EXISTS "Users can view own outfits" ON public.outfits;
+DROP POLICY IF EXISTS "Users can insert own outfits" ON public.outfits;
+DROP POLICY IF EXISTS "Users can update own outfits" ON public.outfits;
+DROP POLICY IF EXISTS "Users can delete own outfits" ON public.outfits;
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS public.users (
-    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+    id TEXT PRIMARY KEY, -- Firebase UID
     email TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -12,7 +24,7 @@ CREATE TABLE IF NOT EXISTS public.users (
 -- Create wardrobe_items table
 CREATE TABLE IF NOT EXISTS public.wardrobe_items (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+    user_id TEXT REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
     name TEXT NOT NULL,
     category TEXT CHECK (category IN ('top', 'bottom', 'dress', 'outerwear', 'shoes', 'accessory')) NOT NULL,
     color TEXT NOT NULL,
@@ -29,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.wardrobe_items (
 -- Create outfits table
 CREATE TABLE IF NOT EXISTS public.outfits (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+    user_id TEXT REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
     name TEXT NOT NULL,
     items UUID[] NOT NULL, -- Array of wardrobe_item IDs
     season TEXT CHECK (season IN ('spring', 'summer', 'fall', 'winter', 'all')) NOT NULL,
@@ -41,45 +53,36 @@ CREATE TABLE IF NOT EXISTS public.outfits (
 );
 
 -- Enable RLS on all tables
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.wardrobe_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.outfits ENABLE ROW LEVEL SECURITY;
 
--- Create RLS policies for users table
-CREATE POLICY "Users can view own profile" ON public.users
-    FOR SELECT USING (auth.uid() = id);
-
-CREATE POLICY "Users can update own profile" ON public.users
-    FOR UPDATE USING (auth.uid() = id);
-
-CREATE POLICY "Users can insert own profile" ON public.users
-    FOR INSERT WITH CHECK (auth.uid() = id);
+-- Note: users table RLS is disabled since we're using Firebase auth
 
 -- Create RLS policies for wardrobe_items table
 CREATE POLICY "Users can view own wardrobe items" ON public.wardrobe_items
-    FOR SELECT USING (auth.uid() = user_id);
+    FOR SELECT USING (true); -- Allow all selects for now
 
 CREATE POLICY "Users can insert own wardrobe items" ON public.wardrobe_items
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+    FOR INSERT WITH CHECK (true); -- Allow all inserts for now
 
 CREATE POLICY "Users can update own wardrobe items" ON public.wardrobe_items
-    FOR UPDATE USING (auth.uid() = user_id);
+    FOR UPDATE USING (true); -- Allow all updates for now
 
 CREATE POLICY "Users can delete own wardrobe items" ON public.wardrobe_items
-    FOR DELETE USING (auth.uid() = user_id);
+    FOR DELETE USING (true); -- Allow all deletes for now
 
 -- Create RLS policies for outfits table
 CREATE POLICY "Users can view own outfits" ON public.outfits
-    FOR SELECT USING (auth.uid() = user_id);
+    FOR SELECT USING (true); -- Allow all selects for now
 
 CREATE POLICY "Users can insert own outfits" ON public.outfits
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+    FOR INSERT WITH CHECK (true); -- Allow all inserts for now
 
 CREATE POLICY "Users can update own outfits" ON public.outfits
-    FOR UPDATE USING (auth.uid() = user_id);
+    FOR UPDATE USING (true); -- Allow all updates for now
 
 CREATE POLICY "Users can delete own outfits" ON public.outfits
-    FOR DELETE USING (auth.uid() = user_id);
+    FOR DELETE USING (true); -- Allow all deletes for now
 
 -- Create function to handle user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()

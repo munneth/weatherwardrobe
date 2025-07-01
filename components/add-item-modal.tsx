@@ -50,14 +50,21 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
     setIsLoading(true)
 
     try {
+      console.log("Starting form submission...")
+      console.log("User ID:", userId)
+      console.log("Form data:", formData)
+      
       let imageUrl: string | undefined = undefined
       
       // Upload image if selected
       if (selectedFile) {
+        console.log("Uploading image...")
         imageUrl = await FileUploadService.uploadImage(selectedFile, userId)
+        console.log("Image uploaded, URL:", imageUrl)
       }
 
-      await WardrobeService.addItem({
+      console.log("Adding item to database...")
+      const result = await WardrobeService.addItem({
         user_id: userId,
         name: formData.name,
         category: formData.category as any,
@@ -65,6 +72,7 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
         material: formData.material,
         image_url: imageUrl
       })
+      console.log("Item added successfully:", result)
 
       // Reset form and close modal
       setFormData({
@@ -78,7 +86,8 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
       setImagePreview(null)
       onClose()
     } catch (error) {
-      console.error("Error adding item:", error)
+      console.error("Detailed error adding item:", error)
+      console.error("Error message:", error instanceof Error ? error.message : error)
       alert("Failed to add item. Please try again.")
     } finally {
       setIsLoading(false)
