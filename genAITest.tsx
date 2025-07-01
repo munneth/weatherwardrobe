@@ -119,7 +119,7 @@ Be practical, stylish, and weather-appropriate. Focus on comfort and functionali
       contents: prompt,
     });
 
-    const responseText = response.text;
+    const responseText = response.text || '';
     
     // Try to parse the JSON response
     try {

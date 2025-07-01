@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -10,7 +10,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { generateOutfitImageWithAspectRatio, generateOutfitImageWithImagen } from "@/lib/gemini-image-service";
 
 interface OutfitItem {
   id: string;
@@ -41,6 +40,17 @@ export default function OutfitCarousel({ outfit, onImageGenerated }: OutfitCarou
   const [loading, setLoading] = useState(false);
   const [selectedAspectRatio, setSelectedAspectRatio] = useState<"1:1" | "3:4" | "4:3" | "9:16" | "16:9">("1:1");
 
+  // Automatically generate the image when the outfit changes
+  useEffect(() => {
+    setGeneratedImages([]); // Reset images when outfit changes
+    if (outfit && outfit.description) {
+      generateImage(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outfit]);
+
+  console.log('OutfitCarousel received outfit:', outfit);
+
   const generateImage = async (useImagen: boolean = true, aspectRatio?: "1:1" | "3:4" | "4:3" | "9:16" | "16:9") => {
     if (!outfit.description) {
       console.error('No outfit description available');
@@ -59,13 +69,63 @@ export default function OutfitCarousel({ outfit, onImageGenerated }: OutfitCarou
       let imageUrl: string;
       
       if (useImagen && aspectRatio) {
-        imageUrl = await generateOutfitImageWithAspectRatio(outfitData, aspectRatio);
+        // Use the API route for single image generation with aspect ratio
+        const response = await fetch('/api/generate-single-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: outfitData.description,
+            model: 'imagen',
+            aspectRatio: aspectRatio
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        imageUrl = result.imageUrl;
       } else if (useImagen) {
-        imageUrl = await generateOutfitImageWithImagen(outfitData);
+        // Use the API route for single image generation with Imagen
+        const response = await fetch('/api/generate-single-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: outfitData.description,
+            model: 'imagen'
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        imageUrl = result.imageUrl;
       } else {
-        // Fallback to regular Gemini generation
-        const { generateOutfitImage } = await import("@/lib/gemini-image-service");
-        imageUrl = await generateOutfitImage(outfitData);
+        // Use the API route for single image generation with Gemini
+        const response = await fetch('/api/generate-single-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: outfitData.description,
+            model: 'gemini'
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        imageUrl = result.imageUrl;
       }
 
       setGeneratedImages(prev => [...prev, imageUrl]);
@@ -88,73 +148,19 @@ export default function OutfitCarousel({ outfit, onImageGenerated }: OutfitCarou
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <Button
-          onClick={() => generateImage(true)}
-          disabled={loading}
-          variant="outline"
-          size="sm"
-        >
-          {loading ? 'Generating...' : 'Generate High Quality'}
-        </Button>
-        
-        <Button
-          onClick={() => generateImage(false)}
-          disabled={loading}
-          variant="outline"
-          size="sm"
-        >
-          {loading ? 'Generating...' : 'Generate Standard'}
-        </Button>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Aspect Ratio:</label>
-        <div className="flex flex-wrap gap-2">
-          {aspectRatios.map((ratio) => (
-            <Button
-              key={ratio.value}
-              onClick={() => {
-                setSelectedAspectRatio(ratio.value);
-                generateImage(true, ratio.value);
-              }}
-              disabled={loading}
-              variant={selectedAspectRatio === ratio.value ? "default" : "outline"}
-              size="sm"
-            >
-              {ratio.label}
-            </Button>
-          ))}
-        </div>
-      </div>
-
+      {loading && (
+        <div className="text-sm text-gray-500">Generating image...</div>
+      )}
       {generatedImages.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Generated Images</h3>
-          <Carousel className="w-full max-w-xs">
-            <CarouselContent>
-              {generatedImages.map((imageUrl, index) => (
-                <CarouselItem key={index}>
-                  <div className="relative">
-                    <img
-                      src={imageUrl}
-                      alt={`Generated outfit ${index + 1}`}
-                      className="w-full h-auto rounded-lg shadow-md"
-                      onError={(e) => {
-                        console.log('Image failed to load:', imageUrl);
-                        e.currentTarget.src = `https://picsum.photos/400/400?random=${index}`;
-                      }}
-                    />
-                    <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                      {index + 1}
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+          <img
+            src={generatedImages[0]}
+            alt={outfit.outfit_name || 'Generated outfit'}
+            className="w-full h-auto rounded-lg shadow-md"
+            onError={(e) => {
+              e.currentTarget.src = `https://picsum.photos/400/400?random=1`;
+            }}
+          />
         </div>
       )}
 
