@@ -1,6 +1,5 @@
 "use client"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,7 +18,6 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -42,15 +40,16 @@ export function LoginForm({
       // Redirect to home page after successful authentication
       console.log("Redirecting to home page...")
       window.location.href = '/'
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Auth error:", error)
-      if (error.code === 'auth/email-already-in-use') {
+      const errorCode = (error as { code?: string }).code
+      if (errorCode === 'auth/email-already-in-use') {
         setError('This email address is already in use.')
-      } else if (error.code === 'auth/weak-password') {
+      } else if (errorCode === 'auth/weak-password') {
         setError('Password is too weak. It should be at least 6 characters.')
-      } else if (error.code === 'auth/user-not-found') {
+      } else if (errorCode === 'auth/user-not-found') {
         setError('No account found with this email.')
-      } else if (error.code === 'auth/wrong-password') {
+      } else if (errorCode === 'auth/wrong-password') {
         setError('Incorrect password.')
       } else {
         setError('An error occurred. Please try again.')
@@ -70,12 +69,13 @@ export function LoginForm({
       const result = await signInWithPopup(auth, provider)
       console.log("Google login successful!", result.user.email)
       window.location.href = '/'
-    } catch (error: any) {
-      if (error.code === 'auth/popup-closed-by-user') {
+    } catch (error: unknown) {
+      const errorCode = (error as { code?: string }).code
+      if (errorCode === 'auth/popup-closed-by-user') {
         // User closed the popup - this is normal, don't show error
         console.log("Google login popup was closed by user")
         setError("")
-      } else if (error.code === 'auth/popup-blocked') {
+      } else if (errorCode === 'auth/popup-blocked') {
         setError('Popup blocked. Please allow popups for this site.')
       } else {
         console.error("Google auth error:", error)

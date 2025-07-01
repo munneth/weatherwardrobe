@@ -1,7 +1,7 @@
 // AI Outfit Generation Service
 // Replace the endpoint and key with your real values
 
-export async function generateOutfitsWithImages(weather, user) {
+export async function generateOutfitsWithImages(weather: Record<string, unknown>, user: { uid?: string } | null) {
   const apiKey = process.env.AI_OUTFIT_API_KEY; // Set this in your .env
   const endpoint = process.env.AI_OUTFIT_API_URL || 'https://your-ai-api-endpoint.com/generate-outfits';
 

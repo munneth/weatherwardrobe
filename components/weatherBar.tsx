@@ -1,6 +1,5 @@
 // components/WeatherBar.tsx
 import { cn } from "@/lib/utils"; // shadcn's class utility
-import { ReactNode } from "react";
 import WeatherContainer from "@/components/weatherContainer"; // Assuming this is the correct import path
 
 interface WeatherBarProps {
@@ -9,7 +8,7 @@ interface WeatherBarProps {
   locationData?: any;
 }
 
-export default function WeatherBar({ data, className, locationData }: WeatherBarProps) {
+export default function WeatherBar({ data, locationData }: WeatherBarProps) {
   return (
     <div className="space-y-4">
       {locationData && (

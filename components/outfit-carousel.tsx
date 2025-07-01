@@ -1,15 +1,5 @@
 "use client"
 import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 interface OutfitItem {
   id: string;
@@ -38,8 +28,6 @@ interface OutfitCarouselProps {
 export default function OutfitCarousel({ outfit, onImageGenerated }: OutfitCarouselProps) {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedAspectRatio, setSelectedAspectRatio] = useState<"1:1" | "3:4" | "4:3" | "9:16" | "16:9">("1:1");
-
   // Automatically generate the image when the outfit changes
   useEffect(() => {
     setGeneratedImages([]); // Reset images when outfit changes
@@ -138,13 +126,7 @@ export default function OutfitCarousel({ outfit, onImageGenerated }: OutfitCarou
     }
   };
 
-  const aspectRatios = [
-    { value: "1:1" as const, label: "Square" },
-    { value: "3:4" as const, label: "Portrait" },
-    { value: "4:3" as const, label: "Landscape" },
-    { value: "9:16" as const, label: "Mobile" },
-    { value: "16:9" as const, label: "Widescreen" }
-  ];
+
 
   return (
     <div className="space-y-4">

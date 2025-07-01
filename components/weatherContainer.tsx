@@ -17,16 +17,12 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
   const forecastDay = data.forecast.forecastday[dayIndex];
   if (!forecastDay) return <div>No data for this day.</div>;
 
-  let newDate = forecastDay.date;
-
-  newDate = newDate.slice(5, 10);
+  const newDate = forecastDay.date.slice(5, 10);
 
   const {
     day: {
       maxtemp_f,
       mintemp_f,
-      maxtemp_c,
-      mintemp_c,
       condition: { text, icon }
     }
   } = forecastDay;

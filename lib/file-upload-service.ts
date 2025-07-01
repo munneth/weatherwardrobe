@@ -5,7 +5,7 @@ export class FileUploadService {
     const fileExt = file.name.split('.').pop()
     const fileName = `${userId}/${Date.now()}.${fileExt}`
     
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('wardrobe-images')
       .upload(fileName, file)
 

@@ -1,28 +1,38 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import WeatherBar from "@/components/weatherBar";
-import  CalendarApp  from "@/components/calendarApp";
-import HisHersCard from "@/components/hisHersCard";
+import CalendarApp from "@/components/calendarApp";
 import NavbarApp from "@/components/navbarApp";
 import FloatingActionButton from "@/components/floating-action-button";
 import UserWardrobe from "@/components/user-wardrobe";
 import OutfitSuggestion from "@/components/outfit-suggestion";
 import OutfitImageDisplay from "@/components/outfit-image-display";
 import { useAuth } from "@/lib/auth-context";
-import { WardrobeService } from "@/lib/wardrobe-service";
 
-import { Button } from "@/components/ui/button";
+interface OutfitSuggestion {
+  outfit_name?: string;
+  reasoning?: string;
+  items?: Array<{
+    id: string;
+    name: string;
+    category: string;
+    reason: string;
+  }>;
+  weather_notes?: string;
+  styling_tips?: string;
+  suggestion?: string;
+  error?: string;
+  description?: string;
+}
 
 export default function ClientHome({ weatherData, locationData }: { weatherData: any; locationData: any }) {
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const { user } = useAuth();
   const [hisOutfitImages, setHisOutfitImages] = useState<string[]>([]);
-  const [hersOutfitImages, setHersOutfitImages] = useState<string[]>([]);
   const [imageLoading, setImageLoading] = useState(false);
-  const [generatedOutfits, setGeneratedOutfits] = useState<any[]>([]);
+  const [generatedOutfits, setGeneratedOutfits] = useState<OutfitSuggestion[]>([]);
   const [selectedOutfitIndex, setSelectedOutfitIndex] = useState(0);
 
-  const generateOutfitImages = async (outfits: any[]) => {
+  const generateOutfitImages = async (outfits: OutfitSuggestion[]) => {
     if (!user || outfits.length === 0) return;
     setImageLoading(true);
     try {
@@ -39,7 +49,6 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
       const data = await response.json();
       const generatedImages = data.images;
       setHisOutfitImages(generatedImages);
-      setHersOutfitImages(generatedImages); // For now, using same images for both
     } catch (error) {
       console.error('Error generating outfit images:', error);
     } finally {
@@ -47,7 +56,7 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
     }
   };
 
-  const handleOutfitsGenerated = (outfits: any[]) => {
+  const handleOutfitsGenerated = (outfits: OutfitSuggestion[]) => {
     setGeneratedOutfits(outfits);
     setSelectedOutfitIndex(0);
     generateOutfitImages(outfits);
@@ -58,10 +67,9 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
     if (user && generatedOutfits.length > 0 && hisOutfitImages.length === 0 && !imageLoading) {
       generateOutfitImages(generatedOutfits);
     }
-  }, [user, generatedOutfits]);
+  }, [user, generatedOutfits, hisOutfitImages.length, imageLoading, generateOutfitImages]);
 
-  // Get the currently selected outfit and image
-  const selectedOutfit = generatedOutfits[selectedOutfitIndex];
+  // Get the currently selected image
   const selectedImage = hisOutfitImages[selectedOutfitIndex];
 
   return (

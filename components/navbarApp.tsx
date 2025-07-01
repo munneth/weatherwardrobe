@@ -1,19 +1,7 @@
 "use client"
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuIndicator,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    NavigationMenuViewport,
-  } from "@/components/ui/navigation-menu"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
-import { signOut } from "firebase/auth"
-import { auth } from "@/lib/firebase"
 
 export default function NavbarApp() {
     const { user, signOut } = useAuth()

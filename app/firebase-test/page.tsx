@@ -1,11 +1,11 @@
 "use client"
 import { useState } from "react"
 import { auth } from "@/lib/firebase"
-import { signInAnonymously } from "firebase/auth"
+import { signInAnonymously, User } from "firebase/auth"
 
 export default function FirebaseTestPage() {
   const [status, setStatus] = useState("")
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   const testAnonymousAuth = async () => {
     try {
@@ -13,8 +13,9 @@ export default function FirebaseTestPage() {
       const result = await signInAnonymously(auth)
       setUser(result.user)
       setStatus("Anonymous auth successful!")
-    } catch (error: any) {
-      setStatus(`Error: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setStatus(`Error: ${errorMessage}`)
       console.error("Auth error:", error)
     }
   }

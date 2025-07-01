@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context'
 import { WardrobeService } from '@/lib/wardrobe-service'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import OutfitCarousel from '@/components/outfit-carousel'
+
 
 interface WeatherData {
   current: {
@@ -99,7 +99,7 @@ export default function OutfitSuggestion({ weatherData, onOutfitsGenerated, sele
 
       if (tops.length === 0 || bottoms.length === 0 || shoes.length === 0) {
         // Not enough for a full outfit
-        let missing = [];
+        const missing = [];
         if (tops.length === 0) missing.push('tops');
         if (bottoms.length === 0) missing.push('bottoms');
         if (shoes.length === 0) missing.push('shoes');
@@ -225,7 +225,7 @@ export default function OutfitSuggestion({ weatherData, onOutfitsGenerated, sele
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Today's Outfit Ideas</CardTitle>
+        <CardTitle>Today&apos;s Outfit Ideas</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Button 

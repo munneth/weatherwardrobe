@@ -67,7 +67,7 @@ export default function AddItemModal({ isOpen, onClose, userId }: AddItemModalPr
       const result = await WardrobeService.addItem({
         user_id: userId,
         name: formData.name,
-        category: formData.category as any,
+        category: formData.category as 'top' | 'bottom' | 'dress' | 'outerwear' | 'shoes' | 'accessory',
         color: formData.color,
         material: formData.material,
         image_url: imageUrl

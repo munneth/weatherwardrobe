@@ -3,9 +3,6 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-
-
 interface AdvancedImageGeneratorProps {
   defaultPrompt?: string;
 }
@@ -16,7 +13,6 @@ export default function AdvancedImageGenerator({ defaultPrompt = "A stylish fash
   const [loading, setLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<'gemini' | 'imagen'>('imagen');
   const [selectedAspectRatio, setSelectedAspectRatio] = useState<"1:1" | "3:4" | "4:3" | "9:16" | "16:9">("1:1");
-  const [numberOfImages, setNumberOfImages] = useState(1);
 
   const models = [
     { id: 'gemini', name: 'Gemini 2.0 Flash', description: 'Good for contextual images with reasoning' },
@@ -93,7 +89,7 @@ export default function AdvancedImageGenerator({ defaultPrompt = "A stylish fash
       <CardHeader>
         <CardTitle>Advanced AI Image Generator</CardTitle>
         <p className="text-sm text-gray-600">
-          Generate high-quality fashion images using Google's latest AI models
+          Generate high-quality fashion images using Google&apos;s latest AI models
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -215,11 +211,11 @@ export default function AdvancedImageGenerator({ defaultPrompt = "A stylish fash
         <div className="bg-blue-50 p-4 rounded-lg">
           <h4 className="font-medium text-blue-900 mb-2">Tips for Better Results:</h4>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Use descriptive language: "A cozy winter outfit with a chunky knit sweater"</li>
-            <li>• Include weather context: "Perfect for 65°F partly cloudy weather"</li>
-            <li>• Specify style: "Professional office wear" or "Casual weekend style"</li>
-            <li>• Mention colors and materials: "Navy blue cotton shirt with khaki pants"</li>
-            <li>• Add mood: "Elegant and sophisticated" or "Relaxed and comfortable"</li>
+            <li>• Use descriptive language: &ldquo;A cozy winter outfit with a chunky knit sweater&rdquo;</li>
+            <li>• Include weather context: &ldquo;Perfect for 65°F partly cloudy weather&rdquo;</li>
+            <li>• Specify style: &ldquo;Professional office wear&rdquo; or &ldquo;Casual weekend style&rdquo;</li>
+            <li>• Mention colors and materials: &ldquo;Navy blue cotton shirt with khaki pants&rdquo;</li>
+            <li>• Add mood: &ldquo;Elegant and sophisticated&rdquo; or &ldquo;Relaxed and comfortable&rdquo;</li>
           </ul>
         </div>
       </CardContent>
