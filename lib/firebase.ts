@@ -7,7 +7,7 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBp6Du1t4aOk4lqUVyZL_XgMEwQCMBdn_I",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "weatherwardrobe-496c1.firebaseapp.com",
   projectId: "weatherwardrobe-496c1",
   storageBucket: "weatherwardrobe-496c1.firebasestorage.app",
@@ -28,4 +28,4 @@ if (typeof window !== 'undefined') {
   });
 }
 
-export { app, analytics, auth }; 
+export { app, analytics, auth };
