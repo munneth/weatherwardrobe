@@ -4,24 +4,19 @@ import ClientHome from "./ClientHome";
 import main from "../genAITest";
 const key = process.env.key;
 
-// Function to get client IP and location
+// Function to get weather data with fallback location
 async function getWeatherData() {
   try {
-    // First, get the client's IP address
-    const ipResponse = await fetch('https://api.ipify.org?format=json');
-    const ipData = await ipResponse.json();
-    const clientIP = ipData.ip;
-    
-    // Then get weather data based on the IP location
+    // Use a default location for initial load
     const weatherResponse = await fetch(
-      `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=${clientIP}&days=7`
+      `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=London&days=7`
     );
     const weatherData = await weatherResponse.json();
     
     return {
       weather: weatherData,
       location: {
-        ip: clientIP,
+        ip: 'Loading...',
         city: weatherData.location?.name || 'Unknown',
         country: weatherData.location?.country || 'Unknown',
         region: weatherData.location?.region || 'Unknown'

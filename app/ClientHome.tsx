@@ -9,6 +9,9 @@ import OutfitSuggestion from "@/components/outfit-suggestion";
 import OutfitImageDisplay from "@/components/outfit-image-display";
 import { useAuth } from "@/lib/auth-context";
 
+//get user ip address
+
+
 interface OutfitSuggestion {
   outfit_name?: string;
   reasoning?: string;
@@ -26,6 +29,36 @@ interface OutfitSuggestion {
 }
 
 export default function ClientHome({ weatherData, locationData }: { weatherData: any; locationData: any }) {
+  const [clientLocation, setClientLocation] = useState<any>(null);
+  const [clientWeatherData, setClientWeatherData] = useState<any>(weatherData);
+  const [clientLocationData, setClientLocationData] = useState<any>(locationData);
+
+  //get user ip address and update weather data
+  useEffect(() => {
+    const getClientLocation = async () => {
+      try {
+        const res = await fetch('https://ipinfo.io/json');
+        const locationData = await res.json();
+        console.log('Client location data:', locationData);
+        setClientLocation(locationData);
+        
+        // Fetch weather data using client IP
+        const weatherResponse = await fetch(`/api/weather?ip=${locationData.ip}`);
+        const weatherData = await weatherResponse.json();
+        console.log('Updated weather data:', weatherData);
+        
+        // Update the weather and location data with client's actual location
+        setClientWeatherData(weatherData.weather);
+        setClientLocationData(weatherData.location);
+      } catch (error) {
+        console.error('Error fetching client location:', error);
+      }
+    };
+
+    getClientLocation();
+  }, []);
+
+
   const { user } = useAuth();
   const [hisOutfitImages, setHisOutfitImages] = useState<string[]>([]);
   const [imageLoading, setImageLoading] = useState(false);
@@ -78,8 +111,10 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
         <NavbarApp />
       </header>
       <main className="p-8 space-y-8">
+
+        
         <div>
-          <WeatherBar data={weatherData} locationData={locationData} className="bg-blue-500 text-white p-4 rounded-lg shadow-md" />
+          <WeatherBar data={clientWeatherData} locationData={clientLocationData} className="bg-blue-500 text-white p-4 rounded-lg shadow-md" />
         </div>
         <div className="flex flex-col md:flex-row gap-8">
           <div className="md:w-1/3">
@@ -87,7 +122,7 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
           </div>
           <div className="md:w-1/3">
             <OutfitSuggestion
-              weatherData={weatherData}
+              weatherData={clientWeatherData}
               onOutfitsGenerated={handleOutfitsGenerated}
               selectedOutfitIndex={selectedOutfitIndex}
               setSelectedOutfitIndex={setSelectedOutfitIndex}

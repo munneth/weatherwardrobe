@@ -16,7 +16,6 @@ export default function WeatherBar({ data, locationData }: WeatherBarProps) {
           <h2 className="text-2xl font-bold text-gray-800">
             Weather in {locationData.city}, {locationData.country}
           </h2>
-          <p className="text-gray-600">IP: {locationData.ip}</p>
         </div>
       )}
       
