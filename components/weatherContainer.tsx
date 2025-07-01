@@ -25,6 +25,8 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
     day: {
       maxtemp_f,
       mintemp_f,
+      maxtemp_c,
+      mintemp_c,
       condition: { text, icon }
     }
   } = forecastDay;
@@ -32,8 +34,8 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
   return (
     <div>
       <h2 className="text-xl font-bold">{newDate}</h2>
-      <p>Max Temp: {maxtemp_f}°F</p>
-      <p>Min Temp: {mintemp_f}°F</p>
+      <p>Max: {maxtemp_f}°F</p>
+      <p>Min: {mintemp_f}°F</p>
       <img src={icon} alt={text} />
     </div>
   );
