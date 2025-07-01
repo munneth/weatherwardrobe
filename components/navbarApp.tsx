@@ -1,3 +1,4 @@
+"use client"
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -15,42 +16,44 @@ import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
 export default function NavbarApp() {
-    const { user } = useAuth()
-
-    const handleSignOut = async () => {
-        try {
-            await signOut(auth)
-            console.log("User signed out successfully")
-        } catch (error) {
-            console.error("Error signing out:", error)
-        }
-    }
+    const { user, signOut } = useAuth()
 
     return (
-        <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <div>
-                <NavigationMenu >
-                <NavigationMenuList >
-                    <NavigationMenuItem>
-                    <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <NavigationMenuLink>Link</NavigationMenuLink>
-                    </NavigationMenuContent>
-                    </NavigationMenuItem>
-                </NavigationMenuList>
-                </NavigationMenu>
-            </div>    
-            <div>
-                {user ? (
-                    <Button onClick={handleSignOut} variant="outline">
-                        Sign Out
-                    </Button>
-                ) : (
-                    <Button asChild>
-                        <Link href="/login">Login</Link>
-                    </Button>
-                )}
+        <nav className="bg-white shadow-sm border-b">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between h-16">
+                    <div className="flex items-center">
+                        <Link href="/" className="text-xl font-bold text-gray-900">
+                            WeatherWardrobe
+                        </Link>
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                        <Link href="/ai-image-test">
+                            <Button variant="outline" size="sm">
+                                AI Image Test
+                            </Button>
+                        </Link>
+                        
+                        {user ? (
+                            <div className="flex items-center space-x-4">
+                                <span className="text-sm text-gray-700">
+                                    Welcome, {user.email}
+                                </span>
+                                <Button onClick={signOut} variant="outline" size="sm">
+                                    Sign Out
+                                </Button>
+                            </div>
+                        ) : (
+                            <Link href="/login">
+                                <Button size="sm">
+                                    Sign In
+                                </Button>
+                            </Link>
+                        )}
+                    </div>
+                </div>
             </div>
-        </div>
+        </nav>
     )
 }

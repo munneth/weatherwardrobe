@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import WeatherBar from "@/components/weatherBar";
 import  CalendarApp  from "@/components/calendarApp";
 import HisHersCard from "@/components/hisHersCard";
@@ -7,8 +7,10 @@ import NavbarApp from "@/components/navbarApp";
 import FloatingActionButton from "@/components/floating-action-button";
 import UserWardrobe from "@/components/user-wardrobe";
 import OutfitSuggestion from "@/components/outfit-suggestion";
+import OutfitImageDisplay from "@/components/outfit-image-display";
 import { useAuth } from "@/lib/auth-context";
 import { WardrobeService } from "@/lib/wardrobe-service";
+
 import { Button } from "@/components/ui/button";
 
 export default function ClientHome({ weatherData, locationData }: { weatherData: any; locationData: any }) {
@@ -18,39 +20,26 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
   const [hersOutfitImages, setHersOutfitImages] = useState<string[]>([]);
   const [imageLoading, setImageLoading] = useState(false);
   const [generatedOutfits, setGeneratedOutfits] = useState<any[]>([]);
+  const [selectedOutfitIndex, setSelectedOutfitIndex] = useState(0);
 
   const generateOutfitImages = async (outfits: any[]) => {
     if (!user || outfits.length === 0) return;
-    
     setImageLoading(true);
-    
     try {
-      const generatedImages: string[] = [];
-
-      for (let i = 0; i < outfits.length; i++) {
-        const outfit = outfits[i];
-        
-        // Create a detailed prompt for image generation based on the outfit description
-        const prompt = `Fashion photography: ${outfit.description} outfit laid out on a clean white background, professional product photography style, high quality, no text, no watermark, minimalist composition, ${outfit.weatherNotes}`;
-
-        console.log(`Generating image for outfit ${i + 1}:`, prompt);
-
-        // For now, we'll use placeholder images with outfit-specific seeds
-        // You can integrate with an AI image generation service here
-        const seed = outfit.description?.toLowerCase().replace(/\s+/g, '') || `outfit${i}`;
-        const placeholderImage = `https://picsum.photos/seed/${seed}/400/300`;
-        
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        generatedImages.push(placeholderImage);
+      const response = await fetch('/api/generate-outfit-images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ outfits }),
+      });
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
       }
-
-      // Set the generated images
-      console.log('Generated images:', generatedImages);
+      const data = await response.json();
+      const generatedImages = data.images;
       setHisOutfitImages(generatedImages);
       setHersOutfitImages(generatedImages); // For now, using same images for both
-
     } catch (error) {
       console.error('Error generating outfit images:', error);
     } finally {
@@ -59,8 +48,8 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
   };
 
   const handleOutfitsGenerated = (outfits: any[]) => {
-    console.log('Outfits generated:', outfits);
     setGeneratedOutfits(outfits);
+    setSelectedOutfitIndex(0);
     generateOutfitImages(outfits);
   };
 
@@ -71,6 +60,10 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
     }
   }, [user, generatedOutfits]);
 
+  // Get the currently selected outfit and image
+  const selectedOutfit = generatedOutfits[selectedOutfitIndex];
+  const selectedImage = hisOutfitImages[selectedOutfitIndex];
+
   return (
     <>
       <header>
@@ -80,35 +73,25 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
         <div>
           <WeatherBar data={weatherData} locationData={locationData} className="bg-blue-500 text-white p-4 rounded-lg shadow-md" />
         </div>
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="">
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="md:w-1/3">
             <CalendarApp />
           </div>
-          <div>
-            <HisHersCard his={true} outfitImages={hisOutfitImages} loading={imageLoading} />
-            {user && (
-              <Button 
-                onClick={() => generateOutfitImages(generatedOutfits)} 
-                disabled={imageLoading || generatedOutfits.length === 0}
-                className="mt-2 w-full"
-                variant="outline"
-              >
-                {imageLoading ? 'Generating...' : 'Generate Outfit Images'}
-              </Button>
-            )}
+          <div className="md:w-1/3">
+            <OutfitSuggestion
+              weatherData={weatherData}
+              onOutfitsGenerated={handleOutfitsGenerated}
+              selectedOutfitIndex={selectedOutfitIndex}
+              setSelectedOutfitIndex={setSelectedOutfitIndex}
+              generatedOutfits={generatedOutfits}
+            />
           </div>
-          {/* <div>
-            <HisHersCard his={false} outfitImages={hersOutfitImages} loading={imageLoading} />
-          </div> */}
+          <div className="md:w-1/3">
+            <OutfitImageDisplay imageUrl={selectedImage} loading={imageLoading} />
+          </div>
         </div>
-        
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <UserWardrobe />
-          </div>
-          <div>
-            <OutfitSuggestion weatherData={weatherData} onOutfitsGenerated={handleOutfitsGenerated} />
-          </div>
+        <div className="mt-8">
+          <UserWardrobe />
         </div>
       </main>
       <FloatingActionButton />

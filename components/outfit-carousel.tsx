@@ -1,8 +1,15 @@
 "use client"
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface OutfitItem {
   id: string;
@@ -20,121 +27,163 @@ interface OutfitSuggestion {
   suggestion?: string;
   error?: string;
   generatedImage?: string;
+  description?: string;
 }
 
 interface OutfitCarouselProps {
-  suggestions: OutfitSuggestion[];
-  currentIndex: number;
-  onIndexChange: (index: number) => void;
+  outfit: OutfitSuggestion;
+  onImageGenerated?: (imageUrl: string) => void;
 }
 
-export default function OutfitCarousel({ suggestions, currentIndex, onIndexChange }: OutfitCarouselProps) {
+export default function OutfitCarousel({ outfit, onImageGenerated }: OutfitCarouselProps) {
+  const [generatedImages, setGeneratedImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState<"1:1" | "3:4" | "4:3" | "9:16" | "16:9">("1:1");
 
-  const nextSlide = () => {
-    const nextIndex = (currentIndex + 1) % suggestions.length;
-    onIndexChange(nextIndex);
+  // Automatically generate the image when the outfit changes
+  useEffect(() => {
+    setGeneratedImages([]); // Reset images when outfit changes
+    if (outfit && outfit.description) {
+      generateImage(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outfit]);
+
+  console.log('OutfitCarousel received outfit:', outfit);
+
+  const generateImage = async (useImagen: boolean = true, aspectRatio?: "1:1" | "3:4" | "4:3" | "9:16" | "16:9") => {
+    if (!outfit.description) {
+      console.error('No outfit description available');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const outfitData = {
+        description: outfit.description,
+        weatherNotes: outfit.weather_notes,
+        outfit_name: outfit.outfit_name,
+        items: outfit.items
+      };
+
+      let imageUrl: string;
+      
+      if (useImagen && aspectRatio) {
+        // Use the API route for single image generation with aspect ratio
+        const response = await fetch('/api/generate-single-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: outfitData.description,
+            model: 'imagen',
+            aspectRatio: aspectRatio
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        imageUrl = result.imageUrl;
+      } else if (useImagen) {
+        // Use the API route for single image generation with Imagen
+        const response = await fetch('/api/generate-single-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: outfitData.description,
+            model: 'imagen'
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        imageUrl = result.imageUrl;
+      } else {
+        // Use the API route for single image generation with Gemini
+        const response = await fetch('/api/generate-single-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: outfitData.description,
+            model: 'gemini'
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        imageUrl = result.imageUrl;
+      }
+
+      setGeneratedImages(prev => [...prev, imageUrl]);
+      onImageGenerated?.(imageUrl);
+      
+    } catch (error) {
+      console.error('Error generating image:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const prevSlide = () => {
-    const prevIndex = currentIndex === 0 ? suggestions.length - 1 : currentIndex - 1;
-    onIndexChange(prevIndex);
-  };
-
-  const currentSuggestion = suggestions[currentIndex];
-
-  if (!currentSuggestion) return null;
+  const aspectRatios = [
+    { value: "1:1" as const, label: "Square" },
+    { value: "3:4" as const, label: "Portrait" },
+    { value: "4:3" as const, label: "Landscape" },
+    { value: "9:16" as const, label: "Mobile" },
+    { value: "16:9" as const, label: "Widescreen" }
+  ];
 
   return (
-    <div className="relative">
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="text-center">{currentSuggestion.outfit_name}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Outfit Details Only - No Image */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <p className="text-sm text-gray-600 text-center">
-              Outfit images are displayed in the carousel above
-            </p>
-          </div>
-
-          {/* Outfit Details */}
-          <div className="space-y-3">
-            {currentSuggestion.reasoning && (
-              <div>
-                <h4 className="font-medium">Why this works:</h4>
-                <p className="text-sm text-gray-600">{currentSuggestion.reasoning}</p>
-              </div>
-            )}
-
-            {currentSuggestion.items && currentSuggestion.items.length > 0 && (
-              <div>
-                <h4 className="font-medium">Items:</h4>
-                <div className="space-y-1">
-                  {currentSuggestion.items.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center p-2 bg-gray-50 rounded text-sm">
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-gray-500">{item.category}</p>
-                      </div>
-                      <p className="text-xs text-gray-600">{item.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {currentSuggestion.weather_notes && (
-              <div>
-                <h4 className="font-medium">Weather Notes:</h4>
-                <p className="text-sm text-gray-600">{currentSuggestion.weather_notes}</p>
-              </div>
-            )}
-
-            {currentSuggestion.styling_tips && (
-              <div>
-                <h4 className="font-medium">Styling Tips:</h4>
-                <p className="text-sm text-gray-600">{currentSuggestion.styling_tips}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Navigation */}
-      <div className="flex justify-between items-center mt-4">
-        <Button 
-          onClick={prevSlide} 
-          variant="outline" 
-          size="sm"
-          className="flex items-center gap-1"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Previous
-        </Button>
-        
-        <div className="flex gap-1">
-          {suggestions.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => onIndexChange(index)}
-              className={`w-2 h-2 rounded-full ${
-                index === currentIndex ? 'bg-blue-500' : 'bg-gray-300'
-              }`}
-            />
-          ))}
+    <div className="space-y-4">
+      {loading && (
+        <div className="text-sm text-gray-500">Generating image...</div>
+      )}
+      {generatedImages.length > 0 && (
+        <div className="space-y-2">
+          <img
+            src={generatedImages[0]}
+            alt={outfit.outfit_name || 'Generated outfit'}
+            className="w-full h-auto rounded-lg shadow-md"
+            onError={(e) => {
+              e.currentTarget.src = `https://picsum.photos/400/400?random=1`;
+            }}
+          />
         </div>
+      )}
 
-        <Button 
-          onClick={nextSlide} 
-          variant="outline" 
-          size="sm"
-          className="flex items-center gap-1"
-        >
-          Next
-          <ChevronRight className="w-4 h-4" />
-        </Button>
-      </div>
+      {outfit.items && outfit.items.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Outfit Items</h3>
+          <div className="grid grid-cols-2 gap-2">
+            {outfit.items.map((item, index) => (
+              <div key={index} className="p-2 bg-gray-50 rounded text-sm">
+                <div className="font-medium">{item.name}</div>
+                <div className="text-gray-600">{item.category}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {outfit.styling_tips && (
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Styling Tips</h3>
+          <p className="text-sm text-gray-700">{outfit.styling_tips}</p>
+        </div>
+      )}
     </div>
   )
 } 
