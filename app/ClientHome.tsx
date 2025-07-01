@@ -9,6 +9,7 @@ import UserWardrobe from "@/components/user-wardrobe";
 import OutfitSuggestion from "@/components/outfit-suggestion";
 import { useAuth } from "@/lib/auth-context";
 import { WardrobeService } from "@/lib/wardrobe-service";
+
 import { Button } from "@/components/ui/button";
 
 export default function ClientHome({ weatherData, locationData }: { weatherData: any; locationData: any }) {
@@ -25,26 +26,23 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
     setImageLoading(true);
     
     try {
-      const generatedImages: string[] = [];
+      console.log('Generating images for outfits:', outfits);
+      
+      // Call the API route for image generation
+      const response = await fetch('/api/generate-outfit-images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ outfits }),
+      });
 
-      for (let i = 0; i < outfits.length; i++) {
-        const outfit = outfits[i];
-        
-        // Create a detailed prompt for image generation based on the outfit description
-        const prompt = `Fashion photography: ${outfit.description} outfit laid out on a clean white background, professional product photography style, high quality, no text, no watermark, minimalist composition, ${outfit.weatherNotes}`;
-
-        console.log(`Generating image for outfit ${i + 1}:`, prompt);
-
-        // For now, we'll use placeholder images with outfit-specific seeds
-        // You can integrate with an AI image generation service here
-        const seed = outfit.description?.toLowerCase().replace(/\s+/g, '') || `outfit${i}`;
-        const placeholderImage = `https://picsum.photos/seed/${seed}/400/300`;
-        
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        generatedImages.push(placeholderImage);
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
       }
+
+      const data = await response.json();
+      const generatedImages = data.images;
 
       // Set the generated images
       console.log('Generated images:', generatedImages);
@@ -93,7 +91,7 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
                 className="mt-2 w-full"
                 variant="outline"
               >
-                {imageLoading ? 'Generating...' : 'Generate Outfit Images'}
+                {imageLoading ? 'Generating AI Images...' : 'Generate AI Outfit Images'}
               </Button>
             )}
           </div>

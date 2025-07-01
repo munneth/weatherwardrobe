@@ -123,6 +123,29 @@ export default function OutfitSuggestion({ weatherData, onOutfitsGenerated }: Ou
           }
         }
 
+        // Create a more detailed, fashion-focused description
+        const outfitItemsList = outfitItems.map(item => item.name).join(', ');
+        const weatherContext = `${weatherData.current.temp_f}°F ${weatherData.current.condition.text.toLowerCase()}`;
+        
+        // Generate a more descriptive outfit description
+        let detailedDescription = '';
+        if (outfitItems.length >= 3) {
+          const tops = outfitItems.filter(item => item.category === 'tops').map(item => item.name);
+          const bottoms = outfitItems.filter(item => item.category === 'bottoms').map(item => item.name);
+          const shoes = outfitItems.filter(item => item.category === 'shoes').map(item => item.name);
+          const outerwear = outfitItems.filter(item => item.category === 'outerwear').map(item => item.name);
+          const accessories = outfitItems.filter(item => item.category === 'accessories').map(item => item.name);
+          
+          detailedDescription = `A stylish ${weatherContext} outfit featuring `;
+          if (tops.length > 0) detailedDescription += `${tops.join(' and ')} `;
+          if (bottoms.length > 0) detailedDescription += `paired with ${bottoms.join(' and ')} `;
+          if (shoes.length > 0) detailedDescription += `and ${shoes.join(' and ')} `;
+          if (outerwear.length > 0) detailedDescription += `topped with ${outerwear.join(' and ')} `;
+          if (accessories.length > 0) detailedDescription += `accessorized with ${accessories.join(' and ')}`;
+        } else {
+          detailedDescription = `A complete ${weatherContext} outfit with ${outfitItemsList}`;
+        }
+
         // Create outfit names based on the combination
         const outfitNames = ["Casual Comfort", "Smart Casual", "Weekend Vibes"];
         
@@ -132,7 +155,7 @@ export default function OutfitSuggestion({ weatherData, onOutfitsGenerated }: Ou
           items: outfitItems,
           weather_notes: `Temperature: ${weatherData.current.temp_f}°F, Conditions: ${weatherData.current.condition.text}`,
           styling_tips: "Layer appropriately and consider the weather conditions",
-          description: outfitDescription.trim() || "Complete outfit combination"
+          description: detailedDescription.trim() || outfitDescription.trim() || "Complete outfit combination"
         };
         
         console.log(`Outfit ${i + 1}:`, outfit);
@@ -191,14 +214,32 @@ export default function OutfitSuggestion({ weatherData, onOutfitsGenerated }: Ou
         )}
 
                 {allSuggestions.length > 0 && (
-          <OutfitCarousel 
-            suggestions={allSuggestions}
-            currentIndex={currentIndex}
-            onIndexChange={(index) => {
-              setCurrentIndex(index);
-              setSuggestion(allSuggestions[index]);
-            }}
-          />
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              {allSuggestions.map((outfit, index) => (
+                <Button
+                  key={index}
+                  onClick={() => {
+                    setCurrentIndex(index);
+                    setSuggestion(outfit);
+                  }}
+                  variant={currentIndex === index ? "default" : "outline"}
+                  size="sm"
+                >
+                  {outfit.outfit_name || `Outfit ${index + 1}`}
+                </Button>
+              ))}
+            </div>
+            
+            {suggestion && (
+              <OutfitCarousel 
+                outfit={suggestion}
+                onImageGenerated={(imageUrl) => {
+                  console.log('Generated image:', imageUrl);
+                }}
+              />
+            )}
+          </div>
         )}
       </CardContent>
     </Card>
