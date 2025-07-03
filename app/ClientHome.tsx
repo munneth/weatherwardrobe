@@ -8,6 +8,8 @@ import UserWardrobe from "@/components/user-wardrobe";
 import OutfitSuggestion from "@/components/outfit-suggestion";
 import OutfitImageDisplay from "@/components/outfit-image-display";
 import { useAuth } from "@/lib/auth-context";
+import Main from "@/components/ui/index";
+import Landing from "@/components/ui/Landing"; // Import the main function from genAITest
 
 //get user ip address
 
@@ -111,7 +113,8 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
         <NavbarApp />
       </header>
       <main className="p-8 space-y-8">
-
+        <div><main></main></div>
+        <div><Landing></Landing></div>
         
         <div>
           <WeatherBar data={clientWeatherData} locationData={clientLocationData} className="bg-blue-500 text-white p-4 rounded-lg shadow-md" />

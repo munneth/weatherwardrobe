@@ -1,4 +1,4 @@
-export default function Home() {
+export default function Main() {
     return (
       <div
         className="min-h-screen flex items-center justify-center text-center bg-cover bg-center"

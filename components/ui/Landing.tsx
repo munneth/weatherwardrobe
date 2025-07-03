@@ -1,4 +1,4 @@
-export default function Home() {
+export default function Landing() {
     return (
       <div className="min-h-screen flex items-center justify-center text-center bg-gradient-radial from-[#f9f5f8] via-[#ede3ef] to-white">
         <div className="px-6">
