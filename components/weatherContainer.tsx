@@ -1,11 +1,9 @@
-// components/WeatherContainer.tsx
 import { cn } from "@/lib/utils";
 
 interface WeatherContainerProps {
-  data?: any; // Add data prop
+  data?: any;
   children?: React.ReactNode;
   className?: string;
-  
 }
 
 interface WeatherInfoProps {
@@ -28,18 +26,23 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
   } = forecastDay;
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">{newDate}</h2>
-      <p>Max: {maxtemp_f}°F</p>
-      <p>Min: {mintemp_f}°F</p>
-      <img src={icon} alt={text} />
+    <div className="text-black font-serif text-center space-y-1">
+      <h2 className="text-sm font-semibold">{newDate}</h2>
+      <p className="text-xs">Max: {maxtemp_f}°F</p>
+      <p className="text-xs">Min: {mintemp_f}°F</p>
+      <img src={icon} alt={text} className="mx-auto w-8 h-8" />
     </div>
   );
 }
 
 export default function WeatherContainer({ data, children, className, dayIndex }: WeatherContainerProps & { dayIndex?: number }) {
   return (
-    <div className={cn("border p-4 rounded-md bg-[#42433F] text-white", className)}>
+    <div
+      className={cn(
+        "bg-white text-black rounded-md p-2 shadow-sm h-full flex items-center justify-center",
+        className
+      )}
+    >
       {data && <WeatherInfo data={data} dayIndex={dayIndex} />}
       {children}
     </div>
