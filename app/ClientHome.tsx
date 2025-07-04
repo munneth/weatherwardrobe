@@ -8,11 +8,7 @@ import UserWardrobe from "@/components/user-wardrobe";
 import OutfitSuggestion from "@/components/outfit-suggestion";
 import OutfitImageDisplay from "@/components/outfit-image-display";
 import { useAuth } from "@/lib/auth-context";
-import Main from "@/components/ui/index";
-import Landing from "@/components/ui/Landing"; // Import the main function from genAITest
-
-//get user ip address
-
+import HomePage from "@/components/ui/homepage";
 
 interface OutfitSuggestion {
   outfit_name?: string;
@@ -60,7 +56,6 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
     getClientLocation();
   }, []);
 
-
   const { user } = useAuth();
   const [hisOutfitImages, setHisOutfitImages] = useState<string[]>([]);
   const [imageLoading, setImageLoading] = useState(false);
@@ -97,14 +92,12 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
     generateOutfitImages(outfits);
   };
 
-  // Generate images when component mounts and user is logged in
   useEffect(() => {
     if (user && generatedOutfits.length > 0 && hisOutfitImages.length === 0 && !imageLoading) {
       generateOutfitImages(generatedOutfits);
     }
   }, [user, generatedOutfits, hisOutfitImages.length, imageLoading, generateOutfitImages]);
 
-  // Get the currently selected image
   const selectedImage = hisOutfitImages[selectedOutfitIndex];
 
   return (
@@ -113,17 +106,28 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
         <NavbarApp />
       </header>
       <main className="p-8 space-y-8">
-        <div><main></main></div>
-        <div><Landing></Landing></div>
-        
+        <div><HomePage /></div> 
+
         <div>
-          <WeatherBar data={clientWeatherData} locationData={clientLocationData} className="bg-blue-500 text-white p-4 rounded-lg shadow-md" />
+          <WeatherBar
+            data={clientWeatherData}
+            locationData={clientLocationData}
+            className="bg-blue-500 text-white p-4 rounded-lg shadow-md"
+          />
         </div>
+
         <div className="flex flex-col md:flex-row gap-8">
           <div className="md:w-1/3">
             <CalendarApp />
           </div>
-          <div className="md:w-1/3">
+
+          {/* Center the outfit image */}
+          <div className="md:w-1/3 flex justify-center items-center">
+            <OutfitImageDisplay imageUrl={selectedImage} loading={imageLoading} />
+          </div>
+
+          {/* Align outfit suggestion to right */}
+          <div className="md:w-1/3 flex flex-col items-end">
             <OutfitSuggestion
               weatherData={clientWeatherData}
               onOutfitsGenerated={handleOutfitsGenerated}
@@ -132,10 +136,8 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
               generatedOutfits={generatedOutfits}
             />
           </div>
-          <div className="md:w-1/3">
-            <OutfitImageDisplay imageUrl={selectedImage} loading={imageLoading} />
-          </div>
         </div>
+
         <div className="mt-8">
           <UserWardrobe />
         </div>
