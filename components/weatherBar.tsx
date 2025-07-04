@@ -7,6 +7,8 @@ interface WeatherBarProps {
   locationData?: any;
 }
 
+
+
 export default function WeatherBar({ data, locationData }: WeatherBarProps) {
   return (
     <div className="space-y-7 w-full">

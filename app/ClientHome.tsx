@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import WeatherBar from "@/components/weatherBar";
 import CalendarApp from "@/components/calendarApp";
 import NavbarApp from "@/components/navbarApp";
@@ -31,6 +31,7 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
   const [clientLocation, setClientLocation] = useState<any>(null);
   const [clientWeatherData, setClientWeatherData] = useState<any>(weatherData);
   const [clientLocationData, setClientLocationData] = useState<any>(locationData);
+  
 
   //get user ip address and update weather data
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
   const [imageLoading, setImageLoading] = useState(false);
   const [generatedOutfits, setGeneratedOutfits] = useState<OutfitSuggestion[]>([]);
   const [selectedOutfitIndex, setSelectedOutfitIndex] = useState(0);
-
+  const section1 = useRef<HTMLDivElement>(null);
   const generateOutfitImages = async (outfits: OutfitSuggestion[]) => {
     if (!user || outfits.length === 0) return;
     setImageLoading(true);
@@ -104,12 +105,12 @@ export default function ClientHome({ weatherData, locationData }: { weatherData:
   return (
     <>
       <header>
-        <NavbarApp />
+        <NavbarApp section1Ref={section1} />
       </header>
       <main className="p-8 space-y-8">
         <div><HomePage /></div> 
 
-        <div>
+        <div id="section1"ref={section1}>
           <WeatherBar
             data={clientWeatherData}
             locationData={clientLocationData}

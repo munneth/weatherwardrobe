@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 
-export default function NavbarApp() {
+export default function NavbarApp({ section1Ref }: { section1Ref: React.RefObject<HTMLDivElement | null> }) {
   const { user, signOut } = useAuth();
 
   return (
@@ -18,7 +18,10 @@ export default function NavbarApp() {
           {/* Navigation Links */}
           <div className="flex items-center space-x-6 text-sm text-gray-700">
             <Link href="/" className="hover:text-black transition">Home</Link>
-            <Link href="/choose" className="hover:text-black transition">Choose Our Fits</Link>
+            <Link href="#" onClick={e =>{
+              e.preventDefault();
+              section1Ref.current?.scrollIntoView({ behavior: "smooth" });
+            }} className="hover:text-black transition">Choose Our Fits</Link>
             <Link href="/ai-image-test"></Link>
 
             {/* Auth */}
