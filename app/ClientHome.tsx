@@ -9,6 +9,7 @@ import OutfitSuggestion from "@/components/outfit-suggestion";
 import OutfitImageDisplay from "@/components/outfit-image-display";
 import { useAuth } from "@/lib/auth-context";
 import HomePage from "@/components/ui/homepage";
+import SvgWithText from "@/components/svg-with-text";
 
 interface OutfitSuggestion {
   outfit_name?: string;
