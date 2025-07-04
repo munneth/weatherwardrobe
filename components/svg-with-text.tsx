@@ -32,8 +32,8 @@ export default function SvgWithText({ text, headerText, className = '' }: SvgWit
         <path d="M0 0H867V528H0V0Z" fill="url(#paint0_radial_25_95)"/>
         <defs>
           <radialGradient id="paint0_radial_25_95" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(433.5 264) rotate(90) scale(264 433.5)">
-            <stop stop-color="#B6A4BD"/>
-            <stop offset="1" stop-color="#FFF2FF" stop-opacity="0"/>
+            <stop stopColor="#B6A4BD"/>
+            <stop offset="1" stopColor="#FFF2FF" stopOpacity="0"/>
           </radialGradient>
         </defs>
       </svg>
