@@ -1,4 +1,5 @@
 "use client"
+
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -11,8 +12,13 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { auth } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '@/lib/firebase'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from 'firebase/auth'
 
 export function LoginForm({
   className,
@@ -32,16 +38,11 @@ export function LoginForm({
     try {
       if (isSignUp) {
         await createUserWithEmailAndPassword(auth, email, password)
-        console.log("User signed up successfully!")
       } else {
         await signInWithEmailAndPassword(auth, email, password)
-        console.log("User signed in successfully!")
       }
-      // Redirect to home page after successful authentication
-      console.log("Redirecting to home page...")
       window.location.href = '/'
     } catch (error: unknown) {
-      console.error("Auth error:", error)
       const errorCode = (error as { code?: string }).code
       if (errorCode === 'auth/email-already-in-use') {
         setError('This email address is already in use.')
@@ -62,43 +63,40 @@ export function LoginForm({
   const handleGoogleLogin = async () => {
     setIsLoading(true)
     setError("")
-    
     try {
-      console.log("Starting Google popup...")
       const provider = new GoogleAuthProvider()
-      const result = await signInWithPopup(auth, provider)
-      console.log("Google login successful!", result.user.email)
+      await signInWithPopup(auth, provider)
       window.location.href = '/'
     } catch (error: unknown) {
       const errorCode = (error as { code?: string }).code
       if (errorCode === 'auth/popup-closed-by-user') {
-        // User closed the popup - this is normal, don't show error
-        console.log("Google login popup was closed by user")
         setError("")
       } else if (errorCode === 'auth/popup-blocked') {
         setError('Popup blocked. Please allow popups for this site.')
       } else {
-        console.error("Google auth error:", error)
         setError('Google login failed. Please try again.')
       }
+    } finally {
       setIsLoading(false)
     }
   }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="bg-white text-black shadow-md">
         <CardHeader>
           <CardTitle>{isSignUp ? "Create account" : "Login to your account"}</CardTitle>
-          <CardDescription>
-            {isSignUp ? "Enter your email below to create your account" : "Enter your email below to login to your account"}
+          <CardDescription className="text-gray-600">
+            {isSignUp
+              ? "Enter your email below to create your account"
+              : "Enter your email below to login to your account"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-black">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -110,51 +108,49 @@ export function LoginForm({
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-black">Password</Label>
                   {!isSignUp && (
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+                    <a
+                      href="#"
+                      className="ml-auto inline-block text-sm text-gray-600 underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
                   )}
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
+                <Input
+                  id="password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required 
+                  required
                 />
               </div>
               {error && (
                 <div className="text-red-500 text-sm">{error}</div>
               )}
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Loading..." : (isSignUp ? "Sign Up" : "Login")}
-                </Button>
-              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Loading..." : (isSignUp ? "Sign Up" : "Login")}
+              </Button>
             </div>
           </form>
-          
+
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-white px-2 text-gray-500">
                   Or continue with
                 </span>
               </div>
             </div>
-            
-            <Button 
+
+            <Button
               type="button"
-              variant="outline" 
-              className="w-full mt-4" 
+              variant="outline"
+              className="w-full mt-4"
               disabled={isLoading}
               onClick={handleGoogleLogin}
             >
@@ -179,13 +175,13 @@ export function LoginForm({
               Continue with Google
             </Button>
           </div>
-          
-          <div className="mt-4 text-center text-sm">
+
+          <div className="mt-4 text-center text-sm text-gray-600">
             {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="underline underline-offset-4 hover:no-underline"
+              className="underline underline-offset-4 hover:no-underline text-black"
             >
               {isSignUp ? "Login" : "Sign up"}
             </button>
