@@ -11,7 +11,7 @@ export default function OutfitImageDisplay({
     <div className="w-full max-w-sm p-4">
       <div className="relative bg-[#70798C] rounded-lg p-6 flex flex-col items-center justify-center min-h-[300px]">
         <h3 className="absolute top-3 left-1/2 transform -translate-x-1/2 text-xl font-semibold text-white font-serif">
-          Today's Outfit
+          Today&apos;s Outfit
         </h3>
 
         {loading && (

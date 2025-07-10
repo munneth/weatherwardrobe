@@ -34,6 +34,16 @@ interface ClientWeatherData {
     humidity: number;
     wind_kph: number;
   };
+  forecast: {
+    forecastday: Array<{
+      date: string;
+      day: {
+        maxtemp_f: number;
+        mintemp_f: number;
+        condition: { text: string; icon: string };
+      };
+    }>;
+  };
   [key: string]: unknown;
 }
 
@@ -62,14 +72,17 @@ export default function ClientHome({
     const getClientLocation = async () => {
       try {
         const res = await fetch("https://ipinfo.io/json");
-        const locationData = await res.json();
+        const locationData: { ip: string } = await res.json();
         console.log("Client location data:", locationData);
 
         // Fetch weather data using client IP
         const weatherResponse = await fetch(
           `/api/weather?ip=${locationData.ip}`
         );
-        const weatherData = await weatherResponse.json();
+        const weatherData: {
+          weather: ClientWeatherData;
+          location: LocationData;
+        } = await weatherResponse.json();
         console.log("Updated weather data:", weatherData);
 
         // Update the weather and location data with client's actual location

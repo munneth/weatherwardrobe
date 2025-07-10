@@ -2,12 +2,39 @@ import { cn } from "@/lib/utils";
 import WeatherContainer from "@/components/weatherContainer";
 
 interface WeatherBarProps {
-  data?: any;
+  data?: ClientWeatherData;
   className?: string;
-  locationData?: any;
+  locationData?: LocationData;
 }
 
+interface ClientWeatherData {
+  current: {
+    temp_c: number;
+    temp_f: number;
+    condition: { text: string };
+    humidity: number;
+    wind_kph: number;
+  };
+  forecast: {
+    forecastday: Array<{
+      date: string;
+      day: {
+        maxtemp_f: number;
+        mintemp_f: number;
+        condition: { text: string; icon: string };
+      };
+    }>;
+  };
+  [key: string]: unknown;
+}
 
+interface LocationData {
+  city?: string;
+  region?: string;
+  country?: string;
+  ip?: string;
+  [key: string]: unknown;
+}
 
 export default function WeatherBar({ data, locationData }: WeatherBarProps) {
   return (

@@ -21,6 +21,8 @@ interface OutfitData {
   items?: Array<{
     name: string;
     category: string;
+    color?: string;
+    material?: string;
   }>;
 }
 
@@ -37,9 +39,8 @@ export async function generateOutfitImage(outfit: OutfitData): Promise<string> {
         outfit.items
           ?.map((item) => {
             let desc = `${item.name} (${item.category})`;
-            if ((item as any).color) desc += `, color: ${(item as any).color}`;
-            if ((item as any).material)
-              desc += `, material: ${(item as any).material}`;
+            if (item.color) desc += `, color: ${item.color}`;
+            if (item.material) desc += `, material: ${item.material}`;
             return desc;
           })
           .join("; ") || "the specified outfit"

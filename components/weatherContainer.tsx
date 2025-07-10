@@ -1,14 +1,35 @@
 import { cn } from "@/lib/utils";
 
 interface WeatherContainerProps {
-  data?: any;
+  data?: ClientWeatherData;
   children?: React.ReactNode;
   className?: string;
 }
 
 interface WeatherInfoProps {
-  data: any;
+  data: ClientWeatherData;
   dayIndex?: number;
+}
+
+interface ClientWeatherData {
+  current: {
+    temp_c: number;
+    temp_f: number;
+    condition: { text: string };
+    humidity: number;
+    wind_kph: number;
+  };
+  forecast: {
+    forecastday: Array<{
+      date: string;
+      day: {
+        maxtemp_f: number;
+        mintemp_f: number;
+        condition: { text: string; icon: string };
+      };
+    }>;
+  };
+  [key: string]: unknown;
 }
 
 function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
@@ -21,8 +42,8 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
     day: {
       maxtemp_f,
       mintemp_f,
-      condition: { text, icon }
-    }
+      condition: { text, icon },
+    },
   } = forecastDay;
 
   return (
@@ -35,7 +56,12 @@ function WeatherInfo({ data, dayIndex = 0 }: WeatherInfoProps) {
   );
 }
 
-export default function WeatherContainer({ data, children, className, dayIndex }: WeatherContainerProps & { dayIndex?: number }) {
+export default function WeatherContainer({
+  data,
+  children,
+  className,
+  dayIndex,
+}: WeatherContainerProps & { dayIndex?: number }) {
   return (
     <div
       className={cn(
