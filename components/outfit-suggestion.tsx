@@ -14,7 +14,7 @@ interface WeatherData {
   };
 }
 
-interface OutfitSuggestion {
+export type OutfitSuggestion = {
   outfit_name?: string;
   reasoning?: string;
   items?: Array<{
@@ -28,7 +28,7 @@ interface OutfitSuggestion {
   suggestion?: string;
   error?: string;
   description?: string;
-}
+};
 
 interface OutfitSuggestionProps {
   weatherData: WeatherData;
@@ -159,9 +159,10 @@ export default function OutfitSuggestion({
           .map((item) => {
             // Try to include color and material if available
             let desc = item.name + " (" + item.category + ")";
-            if ((item as any).color) desc += `, color: ${(item as any).color}`;
-            if ((item as any).material)
-              desc += `, material: ${(item as any).material}`;
+            const wardrobeItem = wardrobeItems.find((w) => w.id === item.id);
+            if (wardrobeItem?.color) desc += `, color: ${wardrobeItem.color}`;
+            if (wardrobeItem?.material)
+              desc += `, material: ${wardrobeItem.material}`;
             return desc;
           })
           .join(", ");
